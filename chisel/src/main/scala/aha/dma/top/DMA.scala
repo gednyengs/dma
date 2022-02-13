@@ -24,9 +24,17 @@ import chisel3.util.isPow2
 import aha.dma.CmdBundle
 import aha.dma.util.{AXI4Intf, AXILiteIntf}
 
-//
+// =============================================================================
 // DMA Top-Level Module
+// -----------------------------------------------------------------------------
 //
+// @param IdWidth       the width of AXI ID signals (AWID, BID, ARID, and RID)
+// @param AddrWidth     the width of AXI address busses (AWADDR and ARADDR)
+// @param DataWidth     the width of AXI data busses (WDATA and RDATA)
+// @param FifoDepth     the depth of the store-and-forward fifo
+// @param MagicID       the ID value to read from the ID_REG register
+//
+// -----------------------------------------------------------------------------
 class DMA ( IdWidth     : Int,
             AddrWidth   : Int,
             DataWidth   : Int,
