@@ -18,6 +18,7 @@ package dma
 
 // Chisel Imports
 import chisel3._
+import chisel3.util.isPow2
 
 // Project Imports
 import aha.dma.CmdBundle
@@ -32,6 +33,8 @@ class DMA ( IdWidth     : Int,
             FifoDepth   : Int,
             MagicID     : Int = 0x5A5A5A5A ) extends RawModule {
 
+    require(isPow2(FifoDepth))
+
     // =========================================================================
     // I/O
     // =========================================================================
@@ -41,13 +44,13 @@ class DMA ( IdWidth     : Int,
     val ARESETn         = IO(Input(Bool()))
 
     // Interrupt
-    val Irq         = IO(Output(Bool()))
+    val Irq             = IO(Output(Bool()))
 
     // AXI-Lite Register Interface
-    val RegIntf     = IO(Flipped(new AXILiteIntf(32, 32)))
+    val RegIntf         = IO(Flipped(new AXILiteIntf(32, 32)))
 
     // AXI4 Interface
-    val M_AXI       = IO(new AXI4Intf(IdWidth, AddrWidth, DataWidth))
+    val M_AXI           = IO(new AXI4Intf(IdWidth, AddrWidth, DataWidth))
 
     // =========================================================================
     // Internal Logic
