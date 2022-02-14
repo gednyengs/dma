@@ -1,33 +1,30 @@
-// =============================================================================
-// filename     : Writer.scala
-// description  : AXI4 Write Engine
-// author       : Gedeon Nyengele
-// =============================================================================
-//
-// Assumptions:
-//  - Transfer address is aligned to the bus width
-//  - Transfer address + number of bytes does not cross MAX_BURST_BYTES boundary
-//
-// TO-DO:
-//  - Add support for ABORT
-//
-// =============================================================================
-
 package aha
 package dma
 
-// Chisel Imports
+/* Chisel Imports */
 import chisel3._
 import chisel3.experimental.ChiselEnum
 import chisel3.util.{Decoupled, Fill, is, switch}
 
-// Project Imports
+/* Project Imports */
 import aha.dma.{clog2, CmdBundle, log2, MAX_BURST_BYTES}
 import aha.dma.util.{AXI4WrIntfView, AXI4AddrPayload}
 
-//
-// AXI4 Writer Engine
-//
+/**
+ * AXI4 Write Engine
+ *
+ * @constructor         constructs a AXI4 write engine with an AXI ID width,
+ *                      address bus width, data bus width, and the type of a
+ *                      transfer command bundle
+ * @tparam W            transfer command bundle type for writer
+ * @param IdWidth       the width of AXI ID signals (AWID, BID, ARID, and RID)
+ * @param AddrWidth     the width of AXI address busses (AWADDR and ARADDR)
+ * @param DataWidth     the width of AXI data busses (WDATA and RDATA)
+ * @param Cmd           the bundle to use for transfer commands
+ *
+ * @note transfer addresses must be aligned to the data bus width (DataWidth)
+ * @note transfers must not cross the [[MAX_BURST_BYTES]]
+ */
 class Writer[W <: CmdBundle](IdWidth: Int,
                              AddrWidth: Int,
                              DataWidth: Int,
@@ -262,16 +259,15 @@ class Writer[W <: CmdBundle](IdWidth: Int,
      } // withClockAndReset(ACLK, reset)
 }
 
-//
-// Companion Object
-//
-
+/**
+ * Provides the states for the [[Writer]] finite state machine
+ */
 object Writer {
 
-    //
-    // States for Reader FSM
-    //
+    /**
+     * States for Writer FSM
+     */
     object State extends ChiselEnum {
         val sIDLE, sADDR, sDATA, sRESP, sSTAT = Value
-    }
-}
+    } // object State
+} // object Writer

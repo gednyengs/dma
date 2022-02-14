@@ -1,22 +1,20 @@
-// =============================================================================
-// filename     : RegFile.scala
-// description  : Controller Register File (A La Xilinx AXI4 Peripherals)
-// author       : Gedeon Nyengele
-// =============================================================================
-
 package aha
 package dma
 
-// Chisel Imports
+/* Chisel Imports */
 import chisel3._
 import chisel3.util.{Cat, is, switch}
 
-// Project Imports
+/* Project Imports */
 import aha.dma.util.AXILiteIntf
 
-//
-// Register File
-//
+/**
+ * DMA Register File with AXI-Lite interface
+ *
+ * @constructor         constructs a register file with the provided value for
+ *                      the ID register
+ * @param MagicID       the value for the ID register
+ */
 class RegFile(MagicID: Int = 0x5A5A5A5A) extends RawModule {
 
     // =========================================================================
@@ -268,4 +266,4 @@ class RegFile(MagicID: Int = 0x5A5A5A5A) extends RawModule {
         }
 
     } // withClockAndReset(ACLK, reset)
-}
+} // class RegFile

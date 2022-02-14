@@ -1,26 +1,27 @@
-// =============================================================================
-// filename     : PeekQueue.scala
-// description  : Utility Queue with Peek Semantics
-// author       : Gedeon Nyengele
-// =============================================================================
-
 package aha
 package dma
 package util
 
-// Chisel Imports
+/* Chisel Imports */
 import chisel3._
 import chisel3.util.{Decoupled, isPow2}
 
-// Project Imports
+/* Project Imports */
 import aha.dma.clog2
 
-//
-// Peek Queue
-//
+/**
+ * Peek queue (always puts the current value pointed to by the read pointer on
+ * the dequeue interface)
+ *
+ * @constructor         constructs a PeekQueue with the provided element type and
+ *                      depth
+ * @tparam T            the type of elements to store in the queue
+ * @param Depth         the depth of the queue (must be a power of 2)
+ */
 class PeekQueue[T <: Data](Elem: T, Depth: Int) extends RawModule {
 
-    require((Depth > 0) && isPow2(Depth))
+    // Depth must be a power of 2
+    require(isPow2(Depth))
 
     // =========================================================================
     // I/O

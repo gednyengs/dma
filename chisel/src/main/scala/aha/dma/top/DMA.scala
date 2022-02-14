@@ -1,53 +1,43 @@
-// =============================================================================
-// filename     : Controller.scala
-// description  : DMA Top-Level
-// author       : Gedeon Nyengele
-// =============================================================================
-//
-// Assumptions:
-//  - Transfer address is aligned to the bus width
-//  - FIFO_DEPTH must be a power of 2
-//
-// TO-DO:
-//  - Add support for ABORT
-//
-// =============================================================================
-
 package aha
 package dma
 
-// Chisel Imports
+/* Chisel Imports */
 import chisel3._
 import chisel3.util.isPow2
 
-// Project Imports
+/* Project Imports */
 import aha.dma.CmdBundle
 import aha.dma.util.{AXI4Intf, AXILiteIntf}
 
-// =============================================================================
-// DMA Top-Level Module
-// -----------------------------------------------------------------------------
-//
-// @param IdWidth       the width of AXI ID signals (AWID, BID, ARID, and RID)
-// @param AddrWidth     the width of AXI address busses (AWADDR and ARADDR)
-// @param DataWidth     the width of AXI data busses (WDATA and RDATA)
-// @param FifoDepth     the depth of the store-and-forward fifo
-// @param MagicID       the ID value to read from the ID_REG register
-//
-// -----------------------------------------------------------------------------
+/**
+ * DMA Top-Level Module
+ *
+ * @constructor         constructs a DMA engine with an AXI ID width, address bus
+ *                      width, data bus width, store-and-forward fifo depth, and
+ *                      the value of the peripheral ID register
+ * @param IdWidth       the width of AXI ID signals (AWID, BID, ARID, and RID)
+ * @param AddrWidth     the width of AXI address busses (AWADDR and ARADDR)
+ * @param DataWidth     the width of AXI data busses (WDATA and RDATA)
+ * @param FifoDepth     the depth of the store-and-forward fifo
+ * @param MagicID       the ID value to read from the ID_REG register
+ *
+ * @note transfer addresses must be aligned to the data bus width (DataWidth)
+ * @note FifoDepth must be a power of 2
+ */
 class DMA ( IdWidth     : Int,
             AddrWidth   : Int,
             DataWidth   : Int,
             FifoDepth   : Int,
             MagicID     : Int = 0x5A5A5A5A ) extends RawModule {
 
+    // FifoDepth must be a power of 2
     require(isPow2(FifoDepth))
 
     // =========================================================================
     // I/O
     // =========================================================================
 
-    // Clock and Reset
+    // Clock and Rese
     val ACLK            = IO(Input(Clock()))
     val ARESETn         = IO(Input(Bool()))
 

@@ -1,21 +1,20 @@
-// =============================================================================
-// filename     : AXI4.scala
-// description  : Definition of AXI4 Interfaces and Interface Views
-// author       : Gedeon Nyengele
-// =============================================================================
-
 package aha
 package dma
 package util
 
+/* Chisel Imports */
 import chisel3._
 import chisel3.util.Decoupled
 import chisel3.experimental.dataview._
 
-// =============================================================================
-// AXI Lite Interface
-// =============================================================================
-
+/**
+ * AXI-Lite interface bundle
+ *
+ * @constructor     constructs an AXI-Lite interface bundle with the provided
+ *                  address bus width and data bus width
+ * @param AddrWidth     the width of AXI address busses (AWADDR and ARADDR)
+ * @param DataWidth     the width of AXI data busses (WDATA and RDATA)
+ */
 class AXILiteIntf(AddrWidth: Int, DataWidth: Int) extends Bundle {
 
     // AW Channel
@@ -48,10 +47,14 @@ class AXILiteIntf(AddrWidth: Int, DataWidth: Int) extends Bundle {
     val RRESP       = Input(UInt(2.W))
 }
 
-// =============================================================================
-// Full AXI4 Interface Definition
-// =============================================================================
-
+/**
+ * Full AXI4 interface bundle
+ *
+ * @constructor         constructs an AXI4 interface bundle with the provided
+ *                      AXI ID width, address bus width and data bus width
+ * @param AddrWidth     the width of AXI address busses (AWADDR and ARADDR)
+ * @param DataWidth     the width of AXI data busses (WDATA and RDATA)
+ */
 class AXI4Intf(val IdWidth: Int,
                val AddrWidth: Int,
                val DataWidth: Int) extends Bundle {
@@ -113,10 +116,15 @@ class AXI4Intf(val IdWidth: Int,
 }
 
 
-// =============================================================================
-// AXI4 Write Interface View
-// =============================================================================
-
+/**
+ * Bundle providing the write view of an AXI4 interface
+ *
+ * @constructor         constructs an AXI4 write-view interface bundle with the
+ *                      provided AXI ID width, address bus width and data bus width
+ * @param IdWidth       the width of AXI ID signals (AWID, BID, ARID, and RID)
+ * @param AddrWidth     the width of AXI address busses (AWADDR and ARADDR)
+ * @param DataWidth     the width of AXI data busses (WDATA and RDATA)
+ */
 class AXI4WrIntfView(val IdWidth: Int,
                      val AddrWidth: Int,
                      val DataWidth: Int) extends Bundle {
@@ -126,6 +134,14 @@ class AXI4WrIntfView(val IdWidth: Int,
     val B       = Flipped(Decoupled(new AXI4WrRespPayload(IdWidth)))
 }
 
+/**
+ * Provide the Chisel DataView implicit converters to allow viewing an AXI4 full
+ * interface in write-view
+ * {{
+ *      val fullAxi   = new AXI4Intf(IdWIdth, AddrWidth, DataWidth)
+ *      val writeView = fullAxi.views[AXI4WrIntfView]
+ * }}
+ */
 object AXI4WrIntfView {
     implicit val wrIntfView = PartialDataView[AXI4Intf, AXI4WrIntfView] (
 
@@ -159,10 +175,15 @@ object AXI4WrIntfView {
     )
 }
 
-// =============================================================================
-// AXI4 Read Interface View
-// =============================================================================
-
+/**
+ * Bundle providing the read view of an AXI4 interface
+ *
+ * @constructor         constructs an AXI4 read-view interface bundle with the
+ *                      provided AXI ID width, address bus width and data bus width
+ * @param IdWidth       the width of AXI ID signals (AWID, BID, ARID, and RID)
+ * @param AddrWidth     the width of AXI address busses (AWADDR and ARADDR)
+ * @param DataWidth     the width of AXI data busses (WDATA and RDATA)
+ */
 class AXI4RdIntfView(val IdWidth: Int,
                      val AddrWidth: Int,
                      val DataWidth: Int) extends Bundle {
@@ -171,6 +192,14 @@ class AXI4RdIntfView(val IdWidth: Int,
     val R   = Flipped(Decoupled(new AXI4RdDataPayload(IdWidth, DataWidth)))
 }
 
+/**
+ * Provide the Chisel DataView implicit converters to allow viewing an AXI4 full
+ * interface in read-view
+ * {{
+ *      val fullAxi   = new AXI4Intf(IdWIdth, AddrWidth, DataWidth)
+ *      val readView = fullAxi.views[AXI4RdIntfView]
+ * }}
+ */
 object AXI4RdIntfView {
     implicit val rdIntfView = PartialDataView[AXI4Intf, AXI4RdIntfView] (
 
@@ -199,10 +228,14 @@ object AXI4RdIntfView {
     )
 }
 
-// =============================================================================
-// Helper Bundles
-// =============================================================================
-
+/**
+ * AXI4 address bus bundle
+ *
+ * @constructor         constructs axi AXI4 address bundle with the provided
+ *                      AXI ID width and address bus width
+ * @param IdWidth       the width of AXI ID signals (AWID, BID, ARID, and RID)
+ * @param AddrWidth     the width of AXI address busses (AWADDR and ARADDR)
+ */
 class AXI4AddrPayload(IdWidth: Int, AddrWidth: Int) extends Bundle {
     val ID      = UInt(IdWidth.W)
     val ADDR    = UInt(AddrWidth.W)
@@ -214,26 +247,39 @@ class AXI4AddrPayload(IdWidth: Int, AddrWidth: Int) extends Bundle {
     val PROT    = UInt(3.W)
 }
 
-//
-// Write Address and Read Address Payload
-//
+/**
+ * AXI4 write data bus bundle
+ *
+ * @constructor         constructs axi AXI4 write data bundle with the provided
+ *                      AXI data bus width
+ * @param DataWidth     the width of AXI data busses (WDATA and RDATA)
+ */
 class AXI4WrDataPayload(DataWidth: Int) extends Bundle {
     val DATA    = UInt(DataWidth.W)
     val STRB    = UInt((DataWidth/8).W)
     val LAST    = Bool()
 }
 
-//
-// Write Data Payload
-//
+/**
+ * AXI4 write response bus bundle
+ *
+ * @constructor         constructs axi AXI4 write response bundle with the provided
+ *                      AXI ID width
+ * @param IdWidth       the width of AXI ID signals (AWID, BID, ARID, and RID)
+ */
 class AXI4WrRespPayload(IdWidth: Int) extends Bundle {
     val ID      = UInt(IdWidth.W)
     val RESP    = UInt(2.W)
 }
 
-//
-// Read Data Payload
-//
+/**
+ * AXI4 read data bus bundle
+ *
+ * @constructor         constructs axi AXI4 read data bundle with the provided
+ *                      AXI ID width and data bus width
+ * @param IdWidth       the width of AXI ID signals (AWID, BID, ARID, and RID)
+ * @param DataWidth     the width of AXI data busses (WDATA and RDATA)
+ */
 class AXI4RdDataPayload(IdWidth: Int, DataWidth: Int) extends Bundle {
     val ID      = UInt(IdWidth.W)
     val DATA    = UInt(DataWidth.W)

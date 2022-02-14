@@ -1,31 +1,27 @@
-// =============================================================================
-// filename     : Splitter.scala
-// description  : Splits a user transfer request into smaller transfers
-// author       : Gedeon Nyengele
-// =============================================================================
-//
-// Assumptions:
-//  - Transfer address is aligned to the bus width
-//
-// TO-DO:
-//  - Add support for ABORT
-//
-// =============================================================================
-
 package aha
 package dma
 
-// Chisel Imports
+/* Chisel Imports */
 import chisel3._
 import chisel3.experimental.ChiselEnum
 import chisel3.util.{Decoupled, is, isPow2, switch}
 
-// Project Imports
+/* Project Imports */
 import aha.dma.{CmdBundle, log2 , MAX_BURST_BYTES, MAX_BURST_LENGTH, TransBundle}
 
-//
-// Transaction Splitter
-//
+/**
+ * Transaction Splitter (splits a transaction into transfers)
+ *
+ * @constructor         constructs a transaction splitter with the provided
+ *                      bundle type for transaction, bundle type for transfers,
+ *                      address bus width and data bus width
+ * @param TransCmd      bundle type for transaction commands
+ * @param XferCmd       bundle type for transfer commands
+ * @param AddrWidth     the width of AXI address busses (AWADDR and ARADDR)
+ * @param DataWidth     the width of AXI data busses (WDATA and RDATA)
+ *
+ * @note transfer addresses must be aligned to the data bus width (DataWidth)
+ */
 class Splitter[C1 <: TransBundle, C2 <: CmdBundle] (
     TransCmd    : C1,
     XferCmd     : C2,
@@ -195,11 +191,14 @@ class Splitter[C1 <: TransBundle, C2 <: CmdBundle] (
 
 } // class Splitter
 
+/**
+ * Provides the states for the [[Splitter]] finite state machine
+ */
 object Splitter {
 
-    //
-    // States for Splitter FSM
-    //
+    /**
+     * States for Splitter FSM
+     */
     object State extends ChiselEnum {
         val sIDLE, sSPLIT, sWAIT, sSTAT = Value
     } // object State

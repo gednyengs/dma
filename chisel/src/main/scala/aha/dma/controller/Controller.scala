@@ -1,32 +1,32 @@
-// =============================================================================
-// filename     : Controller.scala
-// description  : DMA Contoller
-// author       : Gedeon Nyengele
-// =============================================================================
-//
-// Assumptions:
-//  - Transfer address is aligned to the bus width
-//
-// TO-DO:
-//  - Add support for ABORT
-//
-// =============================================================================
-
 package aha
 package dma
 
-// Chisel Imports
+/* Chisel Imports */
 import chisel3._
 import chisel3.experimental.ChiselEnum
 import chisel3.util.{Decoupled, is, switch}
 
-// Project Imports
+/* Project Imports */
 import aha.dma.CmdBundle
 import aha.dma.util.AXILiteIntf
 
-//
-// Controller
-//
+/**
+ * DMA Control Engine
+ *
+ * @constructor         constructs a DMA control engine with provided address
+ *                      bus width, data bus width, transfer bundle for reader,
+ *                      transfer bundle for writer, and the value for the ID
+ *                      register in the register file
+ * @tparam R            transfer command bundle type for reader
+ * @tparam W            transfer command bundle type for writer
+ * @param AddrWidth     the width of AXI address busses (AWADDR and ARADDR)
+ * @param DataWidth     the width of AXI data busses (WDATA and RDATA)
+ * @param RdCmd         the bundle to use for read transfer commands
+ * @param WrCmd         the bundle to use for write transfer commands
+ * @param MagicID       the value to use for the ID register in the register file
+ *
+ * @note transfer addresses must be aligned to the data bus width (DataWidth)
+ */
 class Controller[R <: CmdBundle, W <: CmdBundle] (
     AddrWidth   : Int,
     DataWidth   : Int,
@@ -342,14 +342,14 @@ class Controller[R <: CmdBundle, W <: CmdBundle] (
 
 } // class Controller
 
-//
-// Companion Object
-//
+/**
+ * Provides the states for the [[Controller]] finite state machine
+ */
 object Controller {
 
-    //
-    // States for Controller FSM
-    //
+    /**
+     * States for Controller FSM
+     */
     object State extends ChiselEnum {
         val sIDLE, sPOST, sSTAT = Value
     }
