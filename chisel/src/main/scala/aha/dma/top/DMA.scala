@@ -104,6 +104,6 @@ class DMA ( IdWidth     : Int,
     //
     // Change Top-Level Name of the Register File Interface Bundle
     //
-    RegIntf.suggestName("RegFile")
+    RegIntf.suggestName("RegIntf")
 
 } // class DMA
