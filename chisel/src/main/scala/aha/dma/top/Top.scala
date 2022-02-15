@@ -1,6 +1,9 @@
 package aha
 package dma
 
+/* Scala Imports */
+import scopt.OParser
+
 /* Chisel Imports */
 import chisel3._
 import chisel3.stage.ChiselStage
@@ -8,49 +11,80 @@ import chisel3.stage.ChiselStage
 /* Project Imports */
 import aha.dma.util._
 
+/**
+ * DMA Configuration
+ */
+case class DMAConfig (
+    // Width of AXI ID
+    IdWidth: Int        = 2,
+    // Width of AXI Address Bus
+    AddrWidth: Int      = 32,
+    // Width of AXI Data Bus
+    DataWidth: Int      = 64,
+    // Name of Type of Register File To Use
+    // (Supported: axi-lite and apb)
+    RegFileName: String = "apb",
+    // Depth of Internal Store-and-Forward FIFO
+    FifoDepth: Int      = 256,
+    // Value of ID Register
+    MagicID: Int        = 0x5A5A5A5A,
+    // Artifact Output Folder
+    OutputDir: String   = "output/"
+)
+
+
 object Main extends App {
 
-    /**
-     * Width of AXI ID
-     */
-    val IdWidth     = 2
+    val builder = OParser.builder[DMAConfig]
 
-    /**
-     * Width of AXI Address Bus
-     */
-    val AddrWidth   = 32
+    val parser = {
+        import builder._
+        OParser.sequence(
+            programName("dma-util"),
+            head("aha-dma", "1.0"),
 
-    /**
-     * Width of AXI Data Bus
-     */
-    val DataWidth   = 64
+            opt[Int]('i', "id-width")
+                .action((x, c) => c.copy(IdWidth = x))
+                .text("width of AXI ID fields"),
 
-    /**
-     * Name of the type of register file to use
-     * (valid values are axi-lite and apb)
-     */
-    val RegFileName = "apb"
+            opt[Int]('a', "addr-width")
+                .action((x, c) => c.copy(AddrWidth = x))
+                .text("width of AXI address busses"),
 
-    /**
-     * Store-and-Forward FIFO Depth
-     * (must be a power of 2)
-     */
-    val FifoDepth   = 256
+            opt[Int]('d', "data-width")
+                .action((x, c) => c.copy(DataWidth = x))
+                .text("width of AXI data busses"),
 
-    /**
-     * ID Register Value
-     */
-    val MagicID     = 0x5A5A5A5A
+            opt[String]('r', "reg-file")
+                .action((x, c) => c.copy(RegFileName = x))
+                .text("name of the type of register file to use (axi-lite or apb)"),
 
+            opt[Int]('f', "fifo-depth")
+                .action((x, c) => c.copy(FifoDepth = x))
+                .text("depth of internal store-and-forward fifo (must be power of 2)"),
 
-    /**
-     * Output Subdirecory
-     */
-    val OutputDir   = "output/"
+            opt[Int]('m', "magic-id")
+                .action((x, c) => c.copy(MagicID = x))
+                .text("value of ID register"),
 
-    // Generate output collateral
-    new ChiselStage().emitSystemVerilog(
-        new DMA(IdWidth, AddrWidth, DataWidth, FifoDepth, RegFileName, MagicID),
-        Array("--target-dir", OutputDir)
-    )
+            opt[String]('o', "output-dir")
+                .action((x, c) => c.copy(OutputDir = x))
+                .text("artifact output directory")
+            )
+        }
+
+    OParser.parse(parser, args, DMAConfig()) match {
+        case Some(config) => new ChiselStage().emitSystemVerilog(
+                                new DMA(
+                                    config.IdWidth,
+                                    config.AddrWidth,
+                                    config.DataWidth,
+                                    config.FifoDepth,
+                                    config.RegFileName,
+                                    config.MagicID
+                                ),
+                                Array("--target-dir", config.OutputDir)
+                             )
+        case _ => println("Failed to parse command line arguments")
+    }
 } // object Main

@@ -9,7 +9,8 @@ lazy val root = (project in file("."))
         name := "aha-dma",
         libraryDependencies ++= Seq(
             "edu.berkeley.cs" %% "chisel3" % chiselVersion,
-            "edu.berkeley.cs" %% "chiseltest" % "0.5.0" % "test"
+            "edu.berkeley.cs" %% "chiseltest" % "0.5.0" % "test",
+            "com.github.scopt" %% "scopt" % "4.0.1"
         ),
         scalacOptions ++= Seq(
             "-language:reflectiveCalls",
