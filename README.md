@@ -19,7 +19,7 @@ To generate the FIRRTL IR and/or SystemVerilog/Verilog views:
 - the output files are placed in a subfolder defined in `chisel > src > main > scala > aha > dma > top > Top.scala`
 
 `sbt run` takes command-line arguments. To see the list of command-line arguments supported,
-run `sbt run --help`
+run `sbt "run --help"`
 
 ## Register Space
 
