@@ -11,17 +11,17 @@ import aha.dma.util._
 object Main extends App {
 
     /**
-     * AXI ID width
+     * Width of AXI ID
      */
     val IdWidth     = 2
 
     /**
-     * AXI Address Bus Width
+     * Width of AXI Address Bus
      */
     val AddrWidth   = 32
 
     /**
-     * AXI Data Bus width
+     * Width of AXI Data Bus
      */
     val DataWidth   = 64
 
