@@ -40,7 +40,7 @@ object Main extends App {
     val parser = {
         import builder._
         OParser.sequence(
-            programName("dma-util"),
+            programName("dma-builder"),
             head("aha-dma", "1.0"),
 
             opt[Int]('i', "id-width")
@@ -85,6 +85,6 @@ object Main extends App {
                                 ),
                                 Array("--target-dir", config.OutputDir)
                              )
-        case _ => println("Failed to parse command line arguments")
+        case _ => ()
     }
 } // object Main

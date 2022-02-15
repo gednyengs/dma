@@ -18,12 +18,8 @@ To generate the FIRRTL IR and/or SystemVerilog/Verilog views:
 - run `run`
 - the output files are placed in a subfolder defined in `chisel > src > main > scala > aha > dma > top > Top.scala`
 
-Note: The file `chisel > src > main > scala > aha > dma > top > Top.scala` provides user-overridable parameters that are used to generate the DMA. Those parameters include:
-- `IdWidth` : AXI ID width (default: 2)
-- `AddrWidth` : the width the AXI address busses (AWADDR and ARADDR) (default: 32)
-- `DataWidth` : the width of the AXI data busses (WDATA and RDATA) (default: 64)
-- `FifoDepth` : the depth the internal store-and-forward fifo. This must be a power of 2 (default: 256)
-- `OutputDir` : the name of subdirectory to use for output collateral (default: "output/")
+`sbt run` takes command-line arguments. To see the list of command-line arguments supported,
+run `sbt run --help`
 
 ## Register Space
 
