@@ -19,6 +19,7 @@ import aha.dma.util.{AXI4Intf, AXILiteIntf}
  * @param AddrWidth     the width of AXI address busses (AWADDR and ARADDR)
  * @param DataWidth     the width of AXI data busses (WDATA and RDATA)
  * @param FifoDepth     the depth of the store-and-forward fifo
+ * @param RegFileName   the name of the register file type to instantiate
  * @param MagicID       the ID value to read from the ID_REG register
  *
  * @note transfer addresses must be aligned to the data bus width (DataWidth)
@@ -28,6 +29,7 @@ class DMA ( IdWidth     : Int,
             AddrWidth   : Int,
             DataWidth   : Int,
             FifoDepth   : Int,
+            RegFileName : String,
             MagicID     : Int = 0x5A5A5A5A ) extends RawModule {
 
     // FifoDepth must be a power of 2
@@ -45,7 +47,7 @@ class DMA ( IdWidth     : Int,
     val Irq             = IO(Output(Bool()))
 
     // AXI-Lite Register Interface
-    val RegIntf         = IO(Flipped(new AXILiteIntf(32, 32)))
+    lazy val RegIntf    = IO(Flipped(controller.reg_file.getRegFileIntf))
 
     // AXI4 Interface
     val M_AXI           = IO(new AXI4Intf(IdWidth, AddrWidth, DataWidth))
@@ -62,6 +64,7 @@ class DMA ( IdWidth     : Int,
                                     DataWidth,
                                     new CmdBundle(AddrWidth),
                                     new CmdBundle(AddrWidth),
+                                    RegFileName,
                                     MagicID
                                 )
                             )
@@ -97,5 +100,10 @@ class DMA ( IdWidth     : Int,
 
     controller.WrCmdIntf    <> data_mover.WrCmdIntf
     controller.WrStatIntf   <> data_mover.WrStatIntf
+
+    //
+    // Change Top-Level Name of the Register File Interface Bundle
+    //
+    RegIntf.suggestName("RegFile")
 
 } // class DMA

@@ -26,10 +26,22 @@ object Main extends App {
     val DataWidth   = 64
 
     /**
+     * Name of the type of register file to use
+     * (valid values are axi-lite and apb)
+     */
+    val RegFileName = "apb"
+
+    /**
      * Store-and-Forward FIFO Depth
      * (must be a power of 2)
      */
     val FifoDepth   = 256
+
+    /**
+     * ID Register Value
+     */
+    val MagicID     = 0x5A5A5A5A
+
 
     /**
      * Output Subdirecory
@@ -38,7 +50,7 @@ object Main extends App {
 
     // Generate output collateral
     new ChiselStage().emitSystemVerilog(
-        new DMA(IdWidth, AddrWidth, DataWidth, FifoDepth),
+        new DMA(IdWidth, AddrWidth, DataWidth, FifoDepth, RegFileName, MagicID),
         Array("--target-dir", OutputDir)
     )
 } // object Main

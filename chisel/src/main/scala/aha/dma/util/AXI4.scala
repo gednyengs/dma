@@ -10,8 +10,8 @@ import chisel3.experimental.dataview._
 /**
  * AXI-Lite interface bundle
  *
- * @constructor     constructs an AXI-Lite interface bundle with the provided
- *                  address bus width and data bus width
+ * @constructor         constructs an AXI-Lite interface bundle with the provided
+ *                      address bus width and data bus width
  * @param AddrWidth     the width of AXI address busses (AWADDR and ARADDR)
  * @param DataWidth     the width of AXI data busses (WDATA and RDATA)
  */

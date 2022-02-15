@@ -23,6 +23,7 @@ import aha.dma.util.AXILiteIntf
  * @param DataWidth     the width of AXI data busses (WDATA and RDATA)
  * @param RdCmd         the bundle to use for read transfer commands
  * @param WrCmd         the bundle to use for write transfer commands
+ * @param RegFileName   the name of the register file type to instantiate
  * @param MagicID       the value to use for the ID register in the register file
  *
  * @note transfer addresses must be aligned to the data bus width (DataWidth)
@@ -32,6 +33,7 @@ class Controller[R <: CmdBundle, W <: CmdBundle] (
     DataWidth   : Int,
     RdCmd       : R,
     WrCmd       : W,
+    RegFileName : String,
     MagicID     : Int = 0x5A5A5A5A ) extends RawModule {
 
     import Controller.State
@@ -42,22 +44,22 @@ class Controller[R <: CmdBundle, W <: CmdBundle] (
     // =========================================================================
 
     // Clock and Reset
-    val ACLK        = IO(Input(Clock()))
-    val ARESETn     = IO(Input(Bool()))
+    val ACLK            = IO(Input(Clock()))
+    val ARESETn         = IO(Input(Bool()))
 
     // Interrupt
-    val Irq         = IO(Output(Bool()))
+    val Irq             = IO(Output(Bool()))
 
     // AXI-Lite Register Interface
-    val RegIntf     = IO(Flipped(new AXILiteIntf(32, 32)))
+    lazy val RegIntf    = IO(Flipped(reg_file.getRegFileIntf))
 
     // Read Command/Status Interfaces
-    val RdCmdIntf   = IO(Decoupled(RdCmd))
-    val RdStatIntf  = IO(Flipped(Decoupled(UInt(2.W))))
+    val RdCmdIntf       = IO(Decoupled(RdCmd))
+    val RdStatIntf      = IO(Flipped(Decoupled(UInt(2.W))))
 
     // Write Command/Status Interfaces
-    val WrCmdIntf   = IO(Decoupled(WrCmd))
-    val WrStatIntf  = IO(Flipped(Decoupled(UInt(2.W))))
+    val WrCmdIntf       = IO(Decoupled(WrCmd))
+    val WrStatIntf      = IO(Flipped(Decoupled(UInt(2.W))))
 
     // =========================================================================
     // Chisel Work-Around for Active-Low Reset
@@ -89,9 +91,12 @@ class Controller[R <: CmdBundle, W <: CmdBundle] (
     val stat_code       = withClockAndReset(ACLK, reset) { RegInit(0.U(2.W)) }
 
     //
-    // Instantiate RegFile
+    // Connect RegFile
     //
-    val reg_file        = Module(new RegFile(MagicID))
+    val reg_file: RegFile = Module(RegFile.get(
+                                RegFileName,
+                                RegFileConfig(32, 32, MagicID)
+                            ))
 
     reg_file.ACLK       := ACLK
     reg_file.ARESETn    := ARESETn

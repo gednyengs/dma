@@ -15,37 +15,19 @@ import aha.dma.util.AXILiteIntf
  *                      the ID register
  * @param MagicID       the value for the ID register
  */
-class RegFile(MagicID: Int = 0x5A5A5A5A) extends RawModule {
+class AXILiteRegFile(val MagicID: Int = 0x5A5A5A5A) extends RegFile {
 
-    // =========================================================================
-    // I/O
-    // =========================================================================
-
-    // Clock and Reset
-    val ACLK            = IO(Input(Clock()))
-    val ARESETn         = IO(Input(Bool()))
+    // Type of Register File Interface
+    type RegIntfTy      = AXILiteIntf
 
     // AXI-Lite Interface
-    val RegIntf         = IO(Flipped(new AXILiteIntf(32, 32)))
-
-    // Control Signals
-    val GO_Pulse        = IO(Output(Bool()))
-    val IRQEnable       = IO(Output(Bool()))
-    val IRQClear_Pulse  = IO(Output(Bool()))
-    val SrcAddr         = IO(Output(UInt(32.W)))
-    val DstAddr         = IO(Output(UInt(32.W)))
-    val Length          = IO(Output(UInt(32.W)))
-
-    // Status Signals
-    val Busy            = IO(Input(Bool()))
-    val IRQStatus       = IO(Input(Bool()))
-    val StatCode        = IO(Input(UInt(2.W)))
+    def getRegFileIntf = new AXILiteIntf(32, 32)
 
     // =========================================================================
     // Chisel Work-Around for Active-Low Reset
     // =========================================================================
 
-    val reset       = (!ARESETn).asAsyncReset
+    val reset           = (!ARESETn).asAsyncReset
 
     // =========================================================================
     // Internal Logic
