@@ -6,6 +6,7 @@ Open-Source AXI4 DMA Engine (SystemVerilog and Chisel Versions)
  - Interrupt
  - AXI4 Support (INCR mode only)
  - 1-D Transfers (Source Address, Destination Address, Length)
+ - AXI-Lite and APB Protocol Support for Register File Access
 
 ## Chisel Generation
 
