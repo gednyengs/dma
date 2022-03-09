@@ -47,7 +47,7 @@ class APBRegFile(val MagicID: Int = 0x5A5A5A5A) extends RegFile {
     // Internal Signals
     //
     val prdata              = withClockAndReset(ACLK, reset) { RegInit(0.U(32.W)) }
-    val pready              = withClockAndReset(ACLK, reset) { RegInit(false.B) }
+    val pready              = Wire(Bool())
     val pslverr             = withClockAndReset(ACLK, reset) { RegInit(false.B) }
 
     val reg_data_out        = Wire(UInt(32.W))
@@ -150,11 +150,7 @@ class APBRegFile(val MagicID: Int = 0x5A5A5A5A) extends RegFile {
         //
         // pready
         //
-        when (rd_en) {
-            pready  := true.B
-        }.otherwise {
-            pready  := false.B
-        }
+        pready  := true.B // Always Ready
 
         //
         // pslverr
